@@ -56,7 +56,11 @@ defmodule Mix.Tasks.Phoenix.Gen.JsonApi do
       Mix.Phoenix.copy_from paths(), "deps/phoenix/priv/templates/phoenix.gen.json", "", binding, [{:eex, "changeset_view.ex", "web/views/changeset_view.ex"}]
     end
 
-    Mix.Phoenix.copy_from paths(), "priv/templates/phoenix.gen.json_api", "", binding, files
+    if File.exists?("priv/templates/phoenix.gen.json_api/") do
+      Mix.Phoenix.copy_from paths(), "priv/templates/phoenix.gen.json_api", "", binding, files
+    else
+      Mix.Phoenix.copy_from paths(), "deps/ja_serializer/priv/templates/phoenix.gen.json_api", "", binding, files
+    end
 
     instructions = """
 
