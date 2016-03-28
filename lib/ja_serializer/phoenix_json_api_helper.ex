@@ -1,6 +1,6 @@
 defmodule JaSerializer.PhoenixJsonApiHelper do
   require Ecto.Query
-  
+
   @moduledoc """
   Use in your Phoenix controller to render jsonapi.org spec json.
 
@@ -52,15 +52,15 @@ defmodule JaSerializer.PhoenixJsonApiHelper do
       alias JaSerializer.PhoenixJsonApiHelper
 
       def index(conn, params) do
-        posts = Article |> PhoenixJsonApiHelper.where_params(params) |> Repo.all
+        posts = Posts |> PhoenixJsonApiHelper.where_params(params) |> Repo.all
         render(conn, "index.json", data: posts)
       end
 
   It allows your router to look like:
 
   ## Router
-      resources "/posts", PostController do
-        get "/users", UserController, :index
+      resources "/users", UserController do
+        get "/posts", PostController, :index
       end
   """
   def where_params(type, params) when is_map(params) do
