@@ -16,7 +16,7 @@ defmodule <%= module %>ControllerTest do
   end
   <%= if Enum.count(refs) != 0 do %>
   defp relationships do <%= for ref <- refs do %>
-    <%= ref %> = Repo.insert!(%<%= module %>{})<% end %>
+    <%= ref %> = Repo.insert!(%<%= base %><%= Phoenix.Naming.camelize(ref) %>{})<% end %>
 
     %{<%= for ref <- refs do %>
       "<%= ref %>" => %{
