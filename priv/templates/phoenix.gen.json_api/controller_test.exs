@@ -8,7 +8,10 @@ defmodule <%= module %>ControllerTest do
   @invalid_attrs %{}
 
   setup do
-    conn = conn() |> put_req_header("accept", "application/vnd.api+json")
+    conn = conn()
+      |> put_req_header("accept", "application/vnd.api+json")
+      |> put_req_header("content-type", "application/vnd.api+json")
+
     {:ok, conn: conn}
   end
   <%= if Enum.count(refs) != 0 do %>

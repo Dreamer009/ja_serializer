@@ -1,6 +1,4 @@
 defmodule JaSerializer.PhoenixJsonApiHelper do
-  import Ecto.Query, only: [where: 2]
-
   @moduledoc """
   Use in your Phoenix controller to render jsonapi.org spec json.
 
