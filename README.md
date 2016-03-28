@@ -244,6 +244,16 @@ defmodule Sample.SomeControllerTest do
 end
 ```
 
+### JSON API Generator
+
+Use our built in generator to get up and running quickly. It uses the same format as the phoenix json generator.
+
+```elixir
+mix phoenix.gen.json_api Checkbox checkboxes description:string checked:boolean list_id:references:lists
+```
+
+Want to tweak our templates? Insert your own under 'priv/templates/phoenix.gen.json_api/' and we'll use yours instead.
+
 ### Pagination
 
 JaSerializer provides page based pagination integration with
