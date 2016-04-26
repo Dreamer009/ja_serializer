@@ -13,7 +13,7 @@ defmodule <%= module %>Controller do
   end
 
   def create(conn, %{"meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
-    changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_params(data))
+    changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_attributes(data))
 
     case Repo.insert(changeset) do
       {:ok, <%= singular %>} ->
@@ -35,7 +35,7 @@ defmodule <%= module %>Controller do
 
   def update(conn, %{"id" => id, "meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
     <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
-    changeset = <%= alias %>.changeset(<%= singular %>, Params.to_params(data))
+    changeset = <%= alias %>.changeset(<%= singular %>, Params.to_attributes(data))
 
     case Repo.update(changeset) do
       {:ok, <%= singular %>} ->
