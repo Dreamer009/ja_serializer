@@ -7,12 +7,12 @@ defmodule <%= module %>Controller do
   plug :scrub_params, "meta" when action in [:create, :update]
   plug :scrub_params, "data" when action in [:create, :update]
 
-  def index(conn, params) do
+  def index(conn, _params) do
     <%= plural %> = Repo.all(<%= alias %>)
     render(conn, "index.json", data: <%= plural %>)
   end
 
-  def create(conn, %{"meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
+  def create(conn, %{"meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
     changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_attributes(data))
 
     case Repo.insert(changeset) do
@@ -33,7 +33,7 @@ defmodule <%= module %>Controller do
     render(conn, "show.json", data: <%= singular %>)
   end
 
-  def update(conn, %{"id" => id, "meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
+  def update(conn, %{"id" => id, "meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
     <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
     changeset = <%= alias %>.changeset(<%= singular %>, Params.to_attributes(data))
 
