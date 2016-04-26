@@ -2,18 +2,18 @@ defmodule <%= module %>Controller do
   use <%= base %>.Web, :controller
 
   alias <%= module %>
-  alias JaSerializer.PhoenixJsonApiHelper
+  alias JaSerializer.Params
 
   plug :scrub_params, "meta" when action in [:create, :update]
   plug :scrub_params, "data" when action in [:create, :update]
 
   def index(conn, params) do
-    <%= plural %> = <%= alias %> |> PhoenixJsonApiHelper.where_params(params) |> Repo.all
+    <%= plural %> = Repo.all(<%= alias %>)
     render(conn, "index.json", data: <%= plural %>)
   end
 
   def create(conn, %{"meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
-    changeset = <%= alias %>.changeset(%<%= alias %>{}, PhoenixJsonApiHelper.to_params(<%= singular %>_params, data["relationships"]))
+    changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_params(data))
 
     case Repo.insert(changeset) do
       {:ok, <%= singular %>} ->
@@ -35,7 +35,7 @@ defmodule <%= module %>Controller do
 
   def update(conn, %{"id" => id, "meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => <%= singular %>_params}}) do
     <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
-    changeset = <%= alias %>.changeset(<%= singular %>, PhoenixJsonApiHelper.to_params(<%= singular %>_params, data["relationships"]))
+    changeset = <%= alias %>.changeset(<%= singular %>, Params.to_params(data))
 
     case Repo.update(changeset) do
       {:ok, <%= singular %>} ->
