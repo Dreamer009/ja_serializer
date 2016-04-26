@@ -8,6 +8,10 @@ JaSerializer
 jsonapi.org formatting of Elixir data structures suitable for serialization by
 libraries such as Poison.
 
+## Questions/Help
+
+Please open an issue or message/mention @alanpeabody in the [Elixir Slack](https://elixir-slackin.herokuapp.com/).
+
 ## Usage
 
 See [documentation](http://hexdocs.pm/ja_serializer/) on hexdoc for full
@@ -43,7 +47,10 @@ defmodule MyApp.ArticleSerializer do
     field: :authored_by
 
   has_many :comments,
-    link: "/articles/:id/comments",
+    links: [
+      related: "/articles/:id/comments",
+      self: "/articles/:id/relationships/comments"
+    ]
 
   def comments(article, _conn) do
     Comment.for_article(article)
@@ -77,7 +84,7 @@ OR provide a `field` option
 * serializer - The serializer to use when serializing this resource
 * include - boolean - true to always side-load this relationship
 * field - custom field to use for relationship retrieval
-* link - custom link to use in the `relationships` hash
+* links - custom links to use in the `relationships` hash
 
 ### Direct Usage
 
@@ -117,11 +124,6 @@ Example: `fields: %{"articles" => "title,body", "comments" => "body"}`
 If you're using Plug, you should be able to call `fetch_query_params(conn)`
 and pass the result of `conn.query_params["fields"]` as this option.
 
-### Relax Usage
-
-See [Relax](https://github.com/AgilionApps/relax) documentation for building
-fully compatible jsonapi.org APIs with Plug.
-
 ### Phoenix Usage
 
 Simply `use JaSerializer.PhoenixView` in your view (or in the Web module) and
@@ -142,7 +144,8 @@ defmodule PhoenixExample.ArticlesController do
     render conn, data: Repo.get(Article, params[:id])
   end
 
-  def create(conn, %{"data" => %{"attributes" => attrs}}) do
+  def create(conn, %{"data" => data}) do
+    attrs = JaSerializer.Params.to_attributes(data)
     changeset = Article.changeset(%Article{}, attrs) 
     case Repo.insert(changeset) do
       {:ok, article} -> 
@@ -352,6 +355,13 @@ defimpl JaSerializer.Formatter, for: [MyStruct] do
   def format(struct), do: struct
 end
 ```
+
+## Complimentary Libraries
+
+* [JaResource](https://github.com/AgilionApps/ja_resource) - WIP behaviour for creating JSON-API controllers in Phoenix.
+* [voorhees](https://github.com/danmcclain/voorhees) - Testing tool for JSON API responses
+* [inquisitor](https://github.com/DockYard/inquisitor) - Composable query builder for Ecto
+* [scrivener](https://github.com/drewolson/scrivener) - Ecto pagination
 
 ## License
 

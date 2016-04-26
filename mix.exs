@@ -21,8 +21,8 @@ defmodule JaSerializer.Mixfile do
 
   defp deps do
     [{:inflex, "~> 1.4"},
-     {:plug, "~> 1.0"},
-     {:ecto, "~> 1.0"},
+     {:plug, "> 1.0.0"},
+     {:ecto, "> 1.0.0"},
      {:poison, "~> 1.4 or ~> 2.0"},
      {:earmark, "~> 0.1", only: :dev},
      {:inch_ex, "~> 0.4", only: :docs},
@@ -43,8 +43,7 @@ defmodule JaSerializer.Mixfile do
   defp description do
     """
     A serialization library implementing the jsonapi.org 1.0 spec suitable for
-    use building JSON APIs in Pheonix, Relax, or any other plug based
-    framework/library.
+    use building JSON APIs in Pheonix and any other Plug based framework or app.
     """
   end
 end

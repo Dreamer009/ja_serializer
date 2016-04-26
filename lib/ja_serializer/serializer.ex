@@ -16,7 +16,7 @@ defmodule JaSerializer.Serializer do
 
         location "/posts/:id"
         attributes [:title, :body, :excerpt, :tags]
-        has_many :comments, link: "/posts/:id/comments"
+        has_many :comments, links: [related: "/posts/:id/comments"]
         has_one :author, serializer: PersonSerializer, include: true
 
         def excerpt(post, _conn) do
@@ -71,8 +71,13 @@ defmodule JaSerializer.Serializer do
   To override simply define the type function:
 
       def type, do: "category"
+
+  You may also specify a dynamic type which recieves the data
+  and connection as parameters:
+
+      def type, do: fn(model, _conn) -> model.type end
   """
-  defcallback type() :: String.t
+  defcallback type() :: String.t | fun()
 
   @doc """
   Returns a map of attributes to be mapped.
@@ -313,7 +318,7 @@ defmodule JaSerializer.Serializer do
       defmodule PostSerializer do
         use JaSerializer
 
-        has_many :comments, link: "/posts/:id/comments"
+        has_many :comments, links: [related: "/posts/:id/comments"]
       end
 
   ## Resource Identifier Relationships
@@ -391,6 +396,14 @@ defmodule JaSerializer.Serializer do
         "warning: The `field` option must be used with a `type` option\n" <>
         Exception.format_stacktrace(Macro.Env.stacktrace(caller))
       ])
+    end
+
+    if opts[:link] do
+      updated =
+        Keyword.get(opts, :links, [])
+          |> Keyword.put_new(:related, opts[:link])
+
+      opts = Keyword.put(opts, :links, updated)
     end
 
     case is_boolean(include) or is_nil(include) do
