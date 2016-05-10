@@ -4,7 +4,6 @@ defmodule <%= module %>Controller do
   alias <%= module %>
   alias JaSerializer.Params
 
-  plug :scrub_params, "meta" when action in [:create, :update]
   plug :scrub_params, "data" when action in [:create, :update]
 
   def index(conn, _params) do
@@ -12,7 +11,7 @@ defmodule <%= module %>Controller do
     render(conn, "index.json", data: <%= plural %>)
   end
 
-  def create(conn, %{"meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
+  def create(conn, %{"data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
     changeset = <%= alias %>.changeset(%<%= alias %>{}, Params.to_attributes(data))
 
     case Repo.insert(changeset) do
@@ -29,12 +28,12 @@ defmodule <%= module %>Controller do
   end
 
   def show(conn, %{"id" => id}) do
-    <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
+    <%= singular %> = Repo.get!(<%= alias %>, id)
     render(conn, "show.json", data: <%= singular %>)
   end
 
-  def update(conn, %{"id" => id, "meta" => _meta, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
-    <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
+  def update(conn, %{"id" => id, "data" => data = %{"type" => <%= inspect singular %>, "attributes" => _<%= singular %>_params}}) do
+    <%= singular %> = Repo.get!(<%= alias %>, id)
     changeset = <%= alias %>.changeset(<%= singular %>, Params.to_attributes(data))
 
     case Repo.update(changeset) do
@@ -48,6 +47,7 @@ defmodule <%= module %>Controller do
   end
 
   def delete(conn, %{"id" => id}) do
+    <%= singular %> = Repo.get!(<%= alias %>, id)
     <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
 
     # Here we use delete! (with a bang) because we expect
