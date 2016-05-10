@@ -48,7 +48,6 @@ defmodule <%= module %>Controller do
 
   def delete(conn, %{"id" => id}) do
     <%= singular %> = Repo.get!(<%= alias %>, id)
-    <%= singular %> = <%= alias %> |> Ecto.Query.where(id: ^id) |> Repo.one!
 
     # Here we use delete! (with a bang) because we expect
     # it to always work (and if it does not, it will raise).
